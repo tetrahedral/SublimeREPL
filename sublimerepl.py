@@ -365,8 +365,9 @@ class ReplView(object):
             self._view.set_read_only(True)
             if sublime.load_settings(SETTINGS_FILE).get("view_auto_close"):
                 window = self._view.window()
-                window.focus_view(self._view)
-                window.run_command("close")
+                if window is not None:
+                    window.focus_view(self._view)
+                    window.run_command("close")
 
     def push_history(self, command):
         self._history.push(command)
@@ -427,10 +428,10 @@ class ReplManager(object):
         return rv
 
     def find_repl(self, external_id):
-        """Finds rv matching external_id taken from 
-           syntax definiton. A mapping is used to handle 
+        """Finds rv matching external_id taken from
+           syntax definiton. A mapping is used to handle
            edge cases"""
-        exid_map = sublime.load_settings(SETTINGS_FILE).get("external_id_mapping")           
+        exid_map = sublime.load_settings(SETTINGS_FILE).get("external_id_mapping")
         for rv in list(self.repl_views.values()):
             rvid = rv.external_id
             view_id = exid_map.get(rvid, rvid)
